@@ -26,9 +26,11 @@
         "announcement-bar-0"
       ],
       "settings": {
+        "menu": "announcement-bar-menu",
+        "hide_announcement_menu": true,
         "auto_rotate": false,
         "change_slides_speed": 5,
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-4",
         "show_line_separator": true,
         "show_social": false,
         "enable_country_selector": false,
@@ -41,7 +43,15 @@
         "logo_position": "middle-left",
         "mobile_logo_position": "center",
         "menu": "main-menu",
-        "menu_type_desktop": "dropdown",
+        "menu_type_desktop": "mega",
+        "collection_list": [
+          "mens",
+          "women",
+          "girls-fashion",
+          "boys-fashion"
+        ],
+        "promo_image": "shopify://shop_images/generate-women-fashion-50-off-promo-image.png",
+        "promo_image_link": "shopify://collections/women",
         "sticky_header_type": "on-scroll-up",
         "show_line_separator": true,
         "color_scheme": "scheme-1",
