@@ -1,0 +1,259 @@
+{% comment %}
+  Renders a megamenu for the header.
+
+  Usage:
+  {% render 'header-mega-menu' %}
+{% endcomment %}
+
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in section.settings.menu.links -%}
+      <li>
+        {%- if link.links != blank -%}
+          <header-menu>
+            <details id="Details-HeaderMenu-{{ forloop.index }}" class="mega-menu">
+              <summary id="HeaderMenu-{{ link.handle }}" class="header__menu-item list-menu__item link focus-inset">
+                <span
+                  {%- if link.child_active %}
+                    class="header__active-menu-item"
+                  {% endif %}
+                >
+                  {{- link.title | escape -}}
+                </span>
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </summary>
+              <div
+                id="MegaMenu-Content-{{ forloop.index }}"
+                class="mega-menu__content mega_grid color-{{ section.settings.menu_color_scheme }} gradient motion-reduce global-settings-popup"
+                tabindex="-1"
+              >
+                <ul
+                  class=" mega_menu_ul mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                  role="list"
+                >
+                  <div class="collections">
+                    {% for collection in section.settings.collection_list %}
+                      <div class="collection_item">
+                        <a class="collection_link" href="{{ collection.url }}">
+                          <div class="collection_container">
+                            <img src="{{ collection.featured_image |  image_url  }}" alt="">
+                            <p>{{ collection.title }}</p>
+                          </div>
+                          <div class="sub_collections">
+                            {% for sub_collection in collection.metafields.custom.sub_collections.value %}
+                              <a href="{{ sub_collection.url }}">
+                                <div class="sub_collection">
+                                  <img src="{{ sub_collection.featured_image |  image_url  }}" alt="" width="60px">
+                                  <p>{{ sub_collection.title }}</p>
+                                </div>
+                              </a>
+                            {% endfor %}
+                          </div>
+                        </a>
+                      </div>
+                    {% endfor %}
+                  </div>
+
+                  {% comment %}
+                    {%- for childlink in link.links -%}
+                    <li>
+                      <a id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}" href="{{ childlink.url }}"
+                        class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                        {% if childlink.current %} aria-current="page" {% endif %}>
+                        {{ childlink.title | escape }}
+                      </a>
+                      {% comment %}
+                      {%- if childlink.links != blank -%}
+                      <ul class="list-unstyled" role="list">
+                        {%- for grandchildlink in childlink.links -%}
+                        <li>
+                          <a id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                            href="{{ grandchildlink.url }}"
+                            class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}" {%
+                            if grandchildlink.current %} aria-current="page" {% endif %}>
+                            {{ grandchildlink.title | escape }}
+                          </a>
+                        </li>
+                        {%- endfor -%}
+                      </ul>
+                      {%- endif -%}
+                      {% endcomment %}
+                    </li>
+                    {%- endfor -%}
+                  {% endcomment %}
+                </ul>
+
+                <div class="mega_grid page-width">
+                  <div class="mage_preview_container">
+                    <img class="preview_image" src="{{ collections['mens'].featured_image |  image_url }}" alt="">
+                  </div>
+
+                  <div class="mega_promo_image">
+                    <p class="promo_text">Sale is live now:</p>
+                    <a href="{{ section.settings.promo_image_link }}">
+                      <img class="" src="{{ section.settings.promo_image |  image_url  }}" alt="">
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </details>
+          </header-menu>
+        {%- else -%}
+          <a
+            id="HeaderMenu-{{ link.handle }}"
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {% endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>
+
+<style>
+  /* ========================================
+   Mega Menu Layout
+======================================== */
+
+  .mega_grid {
+    display: grid;
+    grid-template-columns: 50% 50%;
+  }
+
+  .mega_menu_ul {
+    display: flex;
+    width: 100%;
+    position: relative;
+  }
+
+  /* ========================================
+   Collections Column
+======================================== */
+
+  .collections {
+    position: relative;
+    width: 50%;
+  }
+
+  .collection_item {
+  }
+
+  .collection_link {
+    display: block;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Collection row */
+  .collection_container {
+    display: flex;
+  }
+
+  /* Collection thumbnail */
+  .collection_container img {
+    width: 60px;
+    margin-right: 10px;
+  }
+
+  /* Underline collection title on hover */
+  .collection_link:hover .collection_container p {
+    text-decoration: underline;
+  }
+
+  /* ========================================
+   Sub Collections Panel
+======================================== */
+
+  .sub_collections {
+    position: absolute;
+    top: 0;
+    left: 100%;
+
+    width: 100%;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition: opacity 0.2s ease;
+  }
+
+  /* Show submenu when collection item is hovered */
+  .collections:hover .collection_item:hover .sub_collections {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* ========================================
+   Sub Collection Items
+======================================== */
+
+  .sub_collection {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .sub_collection img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  /* Underline sub-collection title on hover */
+  .sub_collection:hover p {
+    text-decoration: underline;
+  }
+
+  .preview_image {
+    width: 80%;
+    height: 300px;
+    object-fit: cover;
+  }
+
+  .mega_promo_image img {
+    width: 100%;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const items = document.querySelectorAll('.collection_item, .sub_collection');
+    const preview_image = document.querySelector('.preview_image');
+
+    if (preview_image == '') {
+      preview_image.visibility = 'hidden';
+    }
+
+    items.forEach((item) => {
+      item.addEventListener('mouseenter', () => {
+        const img = item.querySelector('img');
+
+        if (img) {
+          const src = img.src;
+          preview_image.src = src;
+          preview_image.visibility = 'visible';
+        }
+      });
+    });
+  });
+</script>

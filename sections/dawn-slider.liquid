@@ -1,0 +1,93 @@
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css"
+>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+
+<div class="page-width">
+  <!-- Slider main container -->
+
+  <div class="swiper my-swiper">
+    <!-- Additional required wrapper -->
+    <div class="swiper-wrapper">
+      <!-- Slides -->
+
+      {% for block in section.blocks %}
+        {% if block.type == 'image_picker' %}
+          <div class="swiper-slide">
+            <img src="{{ block.settings.slide_image |  image_url  }}" alt="">
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      ...
+    </div>
+    <!-- If we need pagination -->
+    <div class="swiper-pagination"></div>
+
+    <!-- If we need navigation buttons -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+</div>
+
+<style>
+  .swiper {
+    width: 100%;
+    height: 300px;
+    border-radius: 10px;
+  }
+
+  .my-swiper {
+    --swiper-navigation-size: 20px;
+    --swiper-navigation-top-offset: 50%;
+    --swiper-navigation-sides-offset: 20px;
+    --swiper-navigation-color: white;
+  }
+</style>
+
+{% javascript %}
+  const swiper = new Swiper('.swiper', {
+    // Optional parameters
+
+    loop: true,
+
+    // If we need pagination
+    pagination: {
+      el: '.swiper-pagination',
+    },
+
+    // Navigation arrows
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  });
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Dawn Slider",
+  "blocks": [
+    {
+      "name": "slide",
+      "type": "image_picker",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "slide_image",
+          "label": "slide"
+        }
+      ]
+    }
+  ],
+
+  "presets": [
+    {
+      "name": "Dawn Slider",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
