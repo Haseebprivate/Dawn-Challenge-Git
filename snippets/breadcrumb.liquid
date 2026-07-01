@@ -1,0 +1,49 @@
+{% assign breadcrumb_collection = collection %}
+
+{% if breadcrumb_collection == blank %}
+  {% assign breadcrumb_collection = product.collections.first %}
+{% endif %}
+
+<nav class="breadcrumb">
+  <a href="/">Home</a>
+
+  {% if breadcrumb_collection %}
+    {% if breadcrumb_collection.metafields.custom.parent_collection.value %}
+      {% assign parent = breadcrumb_collection.metafields.custom.parent_collection.value %}
+
+      <span> / </span>
+
+      <a href="{{ parent.url }}">
+        {{ parent.title }}
+      </a>
+    {% endif %}
+
+    <span> / </span>
+
+    <a href="{{ breadcrumb_collection.url }}">
+      {{ breadcrumb_collection.title }}
+    </a>
+  {% endif %}
+
+  <span><span> / </span>{{ product.title }}</span>
+</nav>
+
+<style>
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    padding-top: 10px;
+  }
+
+  .breadcrumb a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+</style>
