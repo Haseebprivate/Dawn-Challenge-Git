@@ -1263,6 +1263,26 @@
         "id": "sold_out_badge_color_scheme",
         "label": "t:settings_schema.badges.settings.sold_out_badge_color_scheme.label",
         "default": "scheme-3"
+      },
+      {
+        "type": "color",
+        "id": "custom_badge_color",
+        "label": "Custom badge color"
+      },
+      {
+        "type": "color",
+        "id": "custom_badge_text_color",
+        "label": "Custom badge text color"
+      },
+      {
+        "type": "color",
+        "id": "discount_badge_color",
+        "label": "Discount badge color"
+      },
+      {
+        "type": "color",
+        "id": "discount_badge_text_color",
+        "label": "Discount badge text color"
       }
     ]
   },

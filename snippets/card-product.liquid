@@ -142,7 +142,26 @@
                   {{- 'products.product.on_sale' | t -}}
                 </span>
               {%- endif -%}
+              {% if card_product.metafields.custom.badge != blank %}
+                <span
+                  class="badge custom-badge "
+                  style="background-color: {{ settings.custom_badge_color }}; color: {{ settings.custom_badge_text_color }};"
+                >
+                  {{- card_product.metafields.custom.badge -}}
+                </span>
+              {% endif %}
+              {% if card_product.price < card_product.compare_at_price %}
+                {% assign discount = card_product.compare_at_price | minus: card_product.price %}
+                {% assign discount_percentage = discount | times: 100 | divided_by: card_product.compare_at_price %}
+                <span
+                  class="badge custom-badge discount-badge"
+                  style="background-color: {{ settings.discount_badge_color }}; color: {{ settings.discount_badge_text_color }};"
+                >
+                  {{ discount_percentage }}% OFF
+                </span>
+              {% endif %}
             </div>
+            <div class="custom-badge {{ settings.badge_position }}"></div>
           </div>
         </div>
         <div class="card__content">
@@ -625,3 +644,8 @@
     </div>
   </div>
 {%- endif -%}
+
+<style>
+  .custom-badge {
+  }
+</style>
