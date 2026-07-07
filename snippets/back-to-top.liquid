@@ -1,0 +1,106 @@
+<button
+  id="BackToTop"
+  class="back-to-top"
+  aria-label="Back to top"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+    <path fill-rule="evenodd" d="M11.47 2.47a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06l-6.22-6.22V21a.75.75 0 0 1-1.5 0V4.81l-6.22 6.22a.75.75 0 1 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd" />
+  </svg>
+</button>
+
+<style>
+  /*=========================
+ Back To Top
+==========================*/
+
+  .back-to-top {
+    position: fixed;
+    right: 2rem;
+    bottom: 2rem;
+
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 999px;
+
+    background: rgb(var(--color-button));
+    color: rgb(var(--color-button-text));
+
+    cursor: pointer;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(20px);
+
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+
+    z-index: 100;
+  }
+
+  .back-to-top:hover {
+    transform: translateY(-4px);
+  }
+
+  .back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .back-to-top .icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .back-to-top .size-6 {
+    width: 2em;
+    height: 2em;
+  }
+  @media screen and (max-width: 749px) {
+    .back-to-top {
+      right: 1rem;
+      bottom: 1rem;
+      width: 44px;
+      height: 44px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const button = document.getElementById('BackToTop');
+
+    if (!button) return;
+
+    function toggleButton() {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+      const scrollPercentage = documentHeight > 0 ? (scrollTop / documentHeight) * 100 : 0;
+
+      if (scrollPercentage >= 50) {
+        button.classList.add('show');
+      } else {
+        button.classList.remove('show');
+      }
+    }
+
+    window.addEventListener('scroll', toggleButton);
+
+    button.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    });
+
+    // Initial check
+    toggleButton();
+  });
+</script>

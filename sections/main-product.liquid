@@ -114,6 +114,34 @@
                     </a>
                   </div>
                 {%- when 'price' -%}
+                  {% if shop.metafields.custom.sale_is_live.value %}
+                    {% assign discount = shop.metafields.custom.discount_percentage.value %}
+
+                    {% assign discount_amount = product.price | times: discount | divided_by: 100 %}
+
+                    {% assign discounted_price = product.price | minus: discount_amount %}
+                    <div class="custom-price">
+
+                      <s> 
+                      <span class="custom-price__text">Price:</span>
+
+                      <span class="custom-original-price__amount">
+                        {{ product.price | money }}
+                      </span>
+                      </s>
+
+
+                        <span class="custom-discounted-price__text">
+                          Sale Price:
+                        </span>
+
+                        <span class="custom-discounted-price__amount">
+                          {{ discounted_price | money }}
+                        </span>
+
+                        
+                        </div>
+                  {%  else %}
                   <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
                     {%- render 'price',
                       product: product,
@@ -148,6 +176,7 @@
                       {{ form | payment_terms }}
                     {%- endform -%}
                   </div>
+                  {% endif %}
                 {%- when 'inventory' -%}
                   <p
                     class="product__inventory{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} visibility-hidden{% endif %}"
@@ -695,6 +724,27 @@
                   </product-recommendations>
                 {%- when 'icon-with-text' -%}
                   {% render 'icon-with-text', block: block %}
+
+                {% when 'estimated_delivery' %}
+                  {% assign estimated_delivery_block = section.blocks | where: 'type', 'estimated_delivery' | first %}
+
+                  
+                    <div
+                      class="estimated-delivery"
+                      data-min="{{ estimated_delivery_block.settings.delivery_min_days }}"
+                      data-max="  {{ estimated_delivery_block.settings.delivery_max_days }}
+"
+                    >
+                      <span class="estimated-delivery__icon">
+                        🚚
+                      </span>
+
+                      <span class="estimated-delivery__text">
+                        Estimated Delivery:
+                        <strong class="estimated-delivery__date"></strong>
+                      </span>
+                    </div>
+                 
               {%- endcase -%}
             {%- endfor -%}
             <a href="{{ product.url }}" class="link product__view-details animate-arrow">
@@ -704,6 +754,8 @@
           </section>
         </div>
       </div>
+
+  
 
       {% render 'product-media-modal', variant_images: variant_images %}
 
@@ -759,6 +811,148 @@
     </div>
   </product-component>
 </product-info>
+
+    <style>
+        .custom-price {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  background: #fffdf5;
+  border: 1px solid #f4e08a;
+  border-radius: 12px;
+}
+
+.custom-price__text,
+.custom-discounted-price__text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #666;
+}
+
+.custom-original-price__amount {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #777;
+  text-decoration: line-through;
+}
+
+.custom-discounted-price__amount {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #d32f2f;
+}
+
+.custom-discount {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0.45rem 0.9rem;
+
+  background: linear-gradient(135deg, #ffd54f, #ffca28);
+
+  color: #111;
+
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  border-radius: 999px;
+
+  box-shadow:
+    0 3px 10px rgba(255, 193, 7, 0.35),
+    inset 0 1px 0 rgba(255,255,255,.45);
+
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+}
+
+@media screen and (max-width: 749px) {
+  .custom-price {
+    gap: 0.5rem;
+    padding: 0.9rem 1rem;
+  }
+
+  .custom-original-price__amount {
+    font-size: 1.6rem;
+  }
+
+  .custom-discounted-price__amount {
+    font-size: 2rem;
+  }
+
+  .custom-discount {
+    font-size: 1.2rem;
+    padding: 0.35rem 0.75rem;
+  }
+}
+
+
+/* estimated delivery */
+
+.estimated-delivery {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+
+  margin-top: 1.5rem;
+  padding: 1rem;
+
+  border: 1px solid rgba(var(--color-foreground), .1);
+  border-radius: .8rem;
+
+  font-size: 1.4rem;
+}
+
+.estimated-delivery__icon {
+  font-size: 2rem;
+}
+
+.estimated-delivery strong {
+  font-weight: 600;
+}
+
+      </style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const delivery = document.querySelector(".estimated-delivery");
+
+  if (!delivery) return;
+
+  const minDays = Number(delivery.dataset.min);
+  const maxDays = Number(delivery.dataset.max);
+  console.log("Estimated Delivery:", minDays, maxDays);
+
+  function addDays(days) {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+
+    return date.toLocaleDateString(undefined, {
+      month: "long",
+      day: "numeric"
+    });
+  }
+
+  delivery.querySelector(".estimated-delivery__date").textContent =
+    `${addDays(minDays)} - ${addDays(maxDays)}`;
+});
+
+</script>
 
 {% schema %}
 {
@@ -2151,7 +2345,32 @@
           "info": "t:sections.main-product.blocks.icon_with_text.settings.heading.info"
         }
       ]
+    },
+    {
+  "name": "Estimated Delivery",
+  "type": "estimated_delivery",
+  "settings": [
+   
+    {
+      "type": "range",
+      "id": "delivery_min_days",
+      "min": 1,
+      "max": 14,
+      "step": 1,
+      "default": 3,
+      "label": "Minimum delivery days"
+    },
+    {
+      "type": "range",
+      "id": "delivery_max_days",
+      "min": 2,
+      "max": 21,
+      "step": 1,
+      "default": 6,
+      "label": "Maximum delivery days"
     }
+  ]
+}
   ],
   "settings": [
     {

@@ -1,0 +1,135 @@
+{% assign sale_title = shop.metafields.custom.sale_title.value %}
+{% assign discount = shop.metafields.custom.discount_percentage.value %}
+{% assign start_date = shop.metafields.custom.start_date.value %}
+{% assign end_date = shop.metafields.custom.end_date.value %}
+{% assign sale_live = shop.metafields.custom.sale_is_live.value %}
+
+{% if sale_live %}
+  <div
+    class="campaign-banner"
+    data-start="{{ start_date }}"
+    data-end="{{ end_date }}"
+  >
+    <span class="campaign-title">{{ sale_title }}</span>
+
+    <span class="campaign-discount">{{ discount }}% OFF</span>
+
+    <span class="campaign-countdown">{{ end_date }}</span>
+  </div>
+{% endif %}
+
+<style>
+  .campaign-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+
+    padding: 0.8rem 1.5rem;
+    background: yellow;
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  .campaign-title {
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+
+  .campaign-discount {
+    padding: 0.35rem 0.8rem;
+
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.18);
+
+    font-weight: 700;
+
+    white-space: nowrap;
+  }
+
+  .campaign-countdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+
+    font-variant-numeric: tabular-nums;
+  }
+
+  .campaign-countdown span {
+    min-width: 2ch;
+    text-align: center;
+  }
+
+  .campaign-banner.hidden {
+    display: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.querySelector('.campaign-banner');
+
+    if (!banner) return;
+
+    const countdown = banner.querySelector('.campaign-countdown');
+
+    const startDate = new Date(banner.dataset.start);
+    const endDate = new Date(banner.dataset.end);
+
+    function updateCountdown() {
+      const now = new Date();
+
+      // Sale hasn't started yet
+      if (now < startDate) {
+        banner.style.display = 'none';
+        return;
+      }
+
+      // Sale has ended
+      if (now >= endDate) {
+        banner.style.display = 'none';
+        clearInterval(timer);
+        return;
+      }
+
+      // Show banner if sale is active
+      banner.style.display = 'flex';
+
+      const diff = endDate - now;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      countdown.textContent = `${days}DAYS | ${hours}HOURS | ${minutes}MINUTES | ${seconds}SECONDS`;
+    }
+
+    updateCountdown();
+
+    const timer = setInterval(updateCountdown, 1000);
+  });
+</script>
+
+{% schema %}
+{
+  "name": "campaign-banner",
+  "settings": [],
+  "presets": [
+    {
+      "name": "campaign-banner"
+    }
+  ]
+}
+{% endschema %}
