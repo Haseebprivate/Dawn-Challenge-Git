@@ -38,6 +38,13 @@
           "type": "quantity_selector",
           "settings": {}
         },
+        "estimated_delivery_qLRtWc": {
+          "type": "estimated_delivery",
+          "settings": {
+            "delivery_min_days": 2,
+            "delivery_max_days": 6
+          }
+        },
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
@@ -62,6 +69,7 @@
         "price",
         "variant_picker",
         "quantity_selector",
+        "estimated_delivery_qLRtWc",
         "buy_buttons",
         "description",
         "share"
@@ -85,6 +93,10 @@
     "disclosures": {
       "type": "disclosures",
       "settings": {
+        "heading": "Disclosures",
+        "heading_size": "h2",
+        "open_by_default": false,
+        "color_scheme": "",
         "padding_top": 36,
         "padding_bottom": 0
       }
