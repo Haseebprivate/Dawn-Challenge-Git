@@ -42,7 +42,7 @@
           "type": "estimated_delivery",
           "settings": {
             "delivery_min_days": 2,
-            "delivery_max_days": 6
+            "delivery_max_days": 4
           }
         },
         "buy_buttons": {

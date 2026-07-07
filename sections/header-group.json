@@ -37,6 +37,11 @@
         "enable_language_selector": false
       }
     },
+    "campaign_banner_z3wNeQ": {
+      "type": "campaign-banner",
+      "name": "campaign-banner",
+      "settings": {}
+    },
     "header": {
       "type": "header",
       "settings": {
@@ -67,6 +72,7 @@
   },
   "order": [
     "announcement-bar",
+    "campaign_banner_z3wNeQ",
     "header"
   ]
 }
