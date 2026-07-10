@@ -1,0 +1,369 @@
+{% if template contains 'product' %}
+  <style>
+    /* Add this to your style block */
+    html {
+      scroll-behavior: auto !important;
+    }
+    .sticky-atc-bar {
+      position: fixed;
+      bottom: 0px;
+      /* left: 0; */
+      width: 80%;
+      background: #ffffff;
+      border-top: 1px solid #e2e2e2;
+      padding: 12px 20px;
+      box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transform: translateY(100%);
+      transition: transform 0.3s ease-in-out;
+      border: 1px solid black;
+      box-shadow: 10px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sticky-atc-bar.show {
+      transform: translateY(-40px);
+    }
+
+    .sticky-atc-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .sticky-atc-img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+      background: #f4f4f4;
+    }
+
+    .sticky-atc-text .title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin: 0 0 2px 0;
+      color: #121212;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .sticky-atc-text .price {
+      font-size: 1.3rem;
+      margin: 0;
+      color: #555;
+    }
+
+    /* Form and Controls */
+    .sticky-atc-form-container {
+      margin: 0;
+    }
+
+    .sticky-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sticky-variant-select {
+      padding: 0 30px 0 15px;
+      height: 44px;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      color: #121212;
+      font-size: 1.4rem;
+      cursor: pointer;
+      min-width: 150px;
+      border-radius: 0;
+    }
+
+    .sticky-quantity {
+      width: 65px;
+      height: 44px;
+      padding: 0 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+      font-size: 1.4rem;
+      border-radius: 0;
+    }
+
+    .sticky-atc-btn {
+      background: #121212;
+      color: #ffffff;
+      height: 44px;
+      padding: 0 30px;
+      border: none;
+      cursor: pointer;
+      font-size: 1.4rem;
+      font-weight: 500;
+      border-radius: 0;
+      transition: background 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .sticky-atc-btn:hover {
+      background: #333333;
+    }
+
+    .sticky-atc-btn:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .sticky-atc-text-phone {
+      display: none;
+    }
+
+    /* Mobile Adjustments */
+    @media (max-width: 767px) {
+      .sticky-atc-bar.show {
+        transform: translateY(0);
+      }
+      .sticky-atc-bar {
+        padding: 10px;
+        /* justify-content: center; */
+        width: 100%;
+        flex-wrap: wrap;
+      }
+      .sticky-atc-info {
+        display: flex;
+      }
+      .sticky-atc-text {
+        display: none;
+      }
+      .sticky-atc-text-phone {
+        display: block;
+        flex-basis: 100%;
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+      .sticky-atc-text-phone p {
+        margin: 0;
+      }
+      .sticky-controls {
+        width: 100%;
+        justify-content: space-between;
+        gap: 5px;
+      }
+      .sticky-variant-select {
+        flex-grow: 1;
+        min-width: 0;
+        padding-right: 10px;
+        padding: 0 !important;
+      }
+      .sticky-quantity {
+        width: 50px;
+        padding: 0 !important;
+      }
+      .sticky-atc-btn {
+        padding: 0 15px;
+      }
+    }
+
+    .sticky-page-width {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+  <div class="sticky-page-width ">
+    <div class="sticky-atc-bar page-width" id="StickyATCBar">
+      <div class="sticky-atc-text-phone">
+        <p class="title">{{ product.title }}</p>
+        <p class="price" id="StickyPrice">{{ product.selected_or_first_available_variant.price | money }}</p>
+      </div>
+      <div class="sticky-atc-info">
+        {% if product.featured_image %}
+          <img
+            src="{{ product.selected_or_first_available_variant.image | default: product.featured_image | img_url: '100x100' }}"
+            alt="{{ product.title | escape }}"
+            class="sticky-atc-img"
+            id="StickyImg"
+          >
+        {% endif %}
+        <div class="sticky-atc-text">
+          <p class="title">{{ product.title }}</p>
+          <p class="price" id="StickyPrice">{{ product.selected_or_first_available_variant.price | money }}</p>
+        </div>
+      </div>
+
+      <div class="sticky-atc-form-container">
+        <div class="sticky-controls">
+          {%- unless product.has_only_default_variant -%}
+            <select class="sticky-variant-select" id="StickyVariantSelect">
+              {%- for variant in product.variants -%}
+                <option
+                  value="{{ variant.id }}"
+                  data-price="{{ variant.price | money }}"
+                  data-image="{% if variant.image %}{{ variant.image | img_url: '100x100' }}{% endif %}"
+                  data-option1="{{ variant.option1 | escape }}"
+                  data-option2="{{ variant.option2 | escape }}"
+                  data-option3="{{ variant.option3 | escape }}"
+                  {% if variant == product.selected_or_first_available_variant %}
+                    selected
+                  {% endif %}
+                  {% unless variant.available %}
+                    disabled
+                  {% endunless %}
+                >
+                  {{ variant.title }}
+                  {% unless variant.available %}(Sold Out){% endunless %}
+                </option>
+              {%- endfor -%}
+            </select>
+          {%- endunless -%}
+
+          <input type="number" name="quantity" value="1" min="1" class="sticky-quantity" aria-label="Quantity">
+
+          <button
+            type="button"
+            class="sticky-atc-btn"
+            id="StickySubmitBtn"
+            {% unless product.selected_or_first_available_variant.available %}
+              disabled
+            {% endunless %}
+          >
+            <span>
+              {% if product.selected_or_first_available_variant.available %}
+                Add to cart
+              {% else %}
+                Sold out
+              {% endif %}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    console.log('hello from sticky add to cart v2');
+    document.addEventListener('DOMContentLoaded', function () {
+      const stickyBar = document.getElementById('StickyATCBar');
+      const stickyBtn = document.getElementById('StickySubmitBtn');
+      const stickyVariant = document.getElementById('StickyVariantSelect');
+      const stickyQty = document.querySelector('.sticky-quantity');
+      const priceDisplay = document.getElementById('StickyPrice');
+      const imageDisplay = document.getElementById('StickyImg');
+
+      // Find Dawn's main product form and ATC button
+      const mainForm = document.querySelector('form[action*="/cart/add"]');
+      const mainATCBtn = document.querySelector('[name="add"]');
+
+      //   if (!stickyBar || !mainATCBtn || !mainForm) return;
+
+      // 1. SHOW/HIDE LOGIC
+      //   window.addEventListener('scroll', function () {
+      //     const rect = mainATCBtn.getBoundingClientRect();
+      //     if (rect.bottom < 0) {
+      //       stickyBar.classList.add('show');
+      //     } else {
+      //       stickyBar.classList.remove('show');
+      //     }
+      //   });
+
+      window.addEventListener(
+        'scroll',
+        function () {
+          // Calculate how far down the page the user has scrolled
+          const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          const scrollPercentage = (scrollTop / scrollHeight) * 100;
+
+          // Show if 60% or more is reached
+          if (scrollPercentage >= 60) {
+            stickyBar.classList.add('show');
+          } else {
+            stickyBar.classList.remove('show');
+          }
+        },
+        { passive: true }
+      );
+
+      // 2. TWO-WAY QUANTITY SYNC
+      const mainQtyInput =
+        document.querySelector('.product__info-container input[name="quantity"]') ||
+        document.querySelector('input[name="quantity"]');
+      if (stickyQty && mainQtyInput) {
+        stickyQty.addEventListener('input', () => {
+          mainQtyInput.value = stickyQty.value;
+        });
+        mainQtyInput.addEventListener('input', () => {
+          stickyQty.value = mainQtyInput.value;
+        });
+      }
+
+      // 3. TWO-WAY VARIANT SYNC (The Bulletproof Method)
+
+      // A. Sticky -> Main
+      if (stickyVariant) {
+        stickyVariant.addEventListener('change', function () {
+          const selectedOption = this.options[this.selectedIndex];
+
+          // Update Sticky UI (Image and Price)
+          if (priceDisplay) priceDisplay.textContent = selectedOption.getAttribute('data-price');
+          const newImage = selectedOption.getAttribute('data-image');
+          if (imageDisplay && newImage) imageDisplay.src = newImage;
+
+          // Grab exact option names (e.g., "Red", "Large")
+          const opt1 = selectedOption.getAttribute('data-option1');
+          const opt2 = selectedOption.getAttribute('data-option2');
+          const opt3 = selectedOption.getAttribute('data-option3');
+
+          // Broadly search the whole page for matching variant buttons/dropdowns and click them
+          const allRadios = document.querySelectorAll('input[type="radio"]');
+          allRadios.forEach((radio) => {
+            if (radio.value === opt1 || radio.value === opt2 || radio.value === opt3) {
+              if (!radio.checked) {
+                radio.checked = true;
+                radio.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            }
+          });
+
+          const allSelects = document.querySelectorAll('.product-info select, variant-selects select');
+          allSelects.forEach((select) => {
+            Array.from(select.options).forEach((option) => {
+              if (option.value === opt1 || option.value === opt2 || option.value === opt3) {
+                if (select.value !== option.value) {
+                  select.value = option.value;
+                  select.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+              }
+            });
+          });
+        });
+      }
+
+      // B. Main -> Sticky (The Watcher)
+      if (stickyVariant) {
+        let currentVariantId = stickyVariant.value;
+
+        // Check the hidden form ID every quarter-second.
+        // This bypasses all of Dawn's visual HTML and goes straight to the source data.
+        setInterval(function () {
+          const mainVariantInput = mainForm.querySelector('input[name="id"]');
+          if (mainVariantInput && mainVariantInput.value !== currentVariantId) {
+            currentVariantId = mainVariantInput.value;
+
+            if (stickyVariant.value !== currentVariantId) {
+              stickyVariant.value = currentVariantId;
+              // Force the sticky UI to update its price and image to match
+              stickyVariant.dispatchEvent(new Event('change'));
+            }
+          }
+        }, 250);
+      }
+
+      // 4. SUBMIT LOGIC
+      stickyBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        mainATCBtn.click();
+      });
+    });
+  </script>
+{% endif %}

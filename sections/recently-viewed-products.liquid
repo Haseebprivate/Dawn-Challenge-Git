@@ -1,0 +1,201 @@
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+<style>
+  /* Custom CSS for the horizontal scrollbar */
+  .recently-viewed-slider {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  /* Scrollbar styling to match Dawn's modern aesthetic */
+  .recently-viewed-slider::-webkit-scrollbar {
+    height: 6px;
+  }
+  .recently-viewed-slider::-webkit-scrollbar-track {
+    background: rgba(var(--color-foreground), 0.05);
+    border-radius: 10px;
+  }
+  .recently-viewed-slider::-webkit-scrollbar-thumb {
+    background: rgba(var(--color-foreground), 0.2);
+    border-radius: 10px;
+  }
+  .recently-viewed-slider::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--color-foreground), 0.4);
+  }
+
+  /* Show 2 items on mobile */
+  .recently-viewed-slider .slider-item {
+    flex: 0 0 calc(50% - 0.5rem);
+    scroll-snap-align: start;
+  }
+
+  /* Show 4 items on desktop */
+  @media screen and (min-width: 750px) {
+    .recently-viewed-slider {
+      gap: 1.5rem;
+    }
+    .recently-viewed-slider .slider-item {
+      flex: 0 0 calc(25% - 1.125rem);
+    }
+  }
+</style>
+
+<div
+  class="recently-viewed-wrapper page-width section-{{ section.id }}-padding"
+  style="display: none; padding-top: 36px; padding-bottom: 36px;"
+>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2 class="title inline-richtext {{ section.settings.heading_size }}" style="margin: 0;">
+      {{ section.settings.heading }}
+    </h2>
+    <button id="clear-recently-viewed" class="button button--secondary" style="margin: 0;">Clear History</button>
+  </div>
+
+  <ul class="recently-viewed-slider" id="recently-viewed-grid"></ul>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const STORAGE_KEY = 'dawn_recently_viewed';
+  let viewedProducts = [];
+  
+  // Safely parse existing storage
+  try {
+    viewedProducts = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch (e) {
+    viewedProducts = [];
+  }
+
+  // 1. Save current product data safely using Liquid's JSON filter
+  {% if template contains 'product' %}
+    const currentProduct = {
+      handle: {{ product.handle | json }},
+      title: {{ product.title | json }},
+      url: {{ product.url | json }},
+      {% if product.featured_media %}
+        image: {{ product.featured_media | image_url: width: 533 | json }},
+      {% else %}
+        image: "//cdn.shopify.com/s/images/themes/product-1.png",
+      {% endif %}
+      price: {{ product.price | money | json }}
+    };
+
+    // Remove duplicate if it exists, then add to the beginning
+    viewedProducts = viewedProducts.filter(item => item.handle !== currentProduct.handle);
+    viewedProducts.unshift(currentProduct);
+
+    // Keep only the last 8 items
+    if (viewedProducts.length > 8) viewedProducts.pop();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(viewedProducts));
+  {% endif %}
+
+  // 2. Render the recently viewed products
+  const grid = document.getElementById('recently-viewed-grid');
+  const wrapper = document.querySelector('.recently-viewed-wrapper');
+  
+  // Exclude the current product from displaying on its own page
+  {% if template contains 'product' %}
+    const displayProducts = viewedProducts.filter(item => item.handle !== {{ product.handle | json }});
+  {% else %}
+    const displayProducts = viewedProducts;
+  {% endif %}
+
+  // UPDATED: Display top 8 products instead of 4
+  const productsToShow = displayProducts.slice(0, 8);
+
+  if (productsToShow.length > 0) {
+    wrapper.style.display = 'block'; 
+    
+    let html = '';
+    productsToShow.forEach(product => {
+      // Ensure variables aren't undefined
+      const title = product.title || 'Product';
+      const price = product.price || '';
+      const imgUrl = product.image || '';
+      const productUrl = product.url || '#';
+
+      // UPDATED: Replaced "grid__item" with "slider-item"
+      html += `
+        <li class="slider-item">
+          <div class="card-wrapper product-card-wrapper underline-links-hover">
+            <div class="card card--standard card--media">
+              <div class="card__inner color-scheme-1 gradient ratio" style="--ratio-percent: 100%;">
+                <div class="card__media">
+                  <div class="media media--transparent media--hover-effect">
+                    <img src="${imgUrl}" alt="${title.replace(/"/g, '&quot;')}" class="motion-reduce" loading="lazy" width="533" height="533">
+                  </div>
+                </div>
+              </div>
+              <div class="card__content">
+                <div class="card__information" style="padding-top: 1rem;">
+                  <h3 class="card__heading h5">
+                    <a href="${productUrl}" class="full-unstyled-link">${title}</a>
+                  </h3>
+                  <div class="card-information">
+                    <div class="price">
+                      <div class="price__regular">
+                        <span class="price-item price-item--regular">${price}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+      `;
+    });
+    grid.innerHTML = html;
+  }
+
+  // 3. Clear History Logic
+  const clearBtn = document.getElementById('clear-recently-viewed');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      localStorage.removeItem(STORAGE_KEY); 
+      grid.innerHTML = '';                  
+      wrapper.style.display = 'none';       
+    });
+  }
+});
+</script>
+
+{% schema %}
+{
+  "name": "Recently Viewed",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Recently Viewed",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "Small" },
+        { "value": "h1", "label": "Medium" },
+        { "value": "h0", "label": "Large" }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Recently Viewed"
+    }
+  ]
+}
+{% endschema %}
