@@ -731,9 +731,8 @@
                   
                     <div
                       class="estimated-delivery"
-                      data-min="{{ estimated_delivery_block.settings.delivery_min_days }}"
-                      data-max="  {{ estimated_delivery_block.settings.delivery_max_days }}
-"
+                      data-min="{% if product.metafields.custom.minimum_delivery_days %}{{ product.metafields.custom.minimum_delivery_days }} {%  else %} {{ estimated_delivery_block.settings.delivery_min_days }} {% endif %}"
+                      data-max="{% if product.metafields.custom.maximum_delivery_days %}{{ product.metafields.custom.maximum_delivery_days }} {% else %} {{ estimated_delivery_block.settings.delivery_max_days }} {% endif %}"
                     >
                       <span class="estimated-delivery__icon">
                         🚚
