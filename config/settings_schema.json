@@ -1469,6 +1469,18 @@
         "id": "cart_color_scheme",
         "label": "t:sections.all.colors.label",
         "default": "scheme-1"
+      },
+      {
+        "type": "checkbox",
+        "id": "free_shipping_bar",
+        "label": "Free shipping bar",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free Shipping Threshold",
+        "default": 1000
       }
     ]
   }

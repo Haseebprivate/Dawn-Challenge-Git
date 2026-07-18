@@ -1,0 +1,95 @@
+{% if settings.free_shipping_bar and cart.empty? == false and cart.requires_shipping %}
+  {% assign threshold = settings.free_shipping_threshold | times: 100 %}
+  {% assign cart_total = 0 %}
+  {% for item in cart.items %}
+    {% if item.requires_shipping %}
+      {% assign cart_total = cart_total | plus: item.final_line_price %}
+    {% endif %}
+  {% endfor %}
+  {% assign remaining = threshold | minus: cart_total %}
+
+  {% assign width_percentage = cart_total | times: 100 | divided_by: threshold %}
+  <div class="free-shipping-bar">
+    <div class="free-shipping-bar__content">
+      {% if cart_total >= threshold %}
+        <p class="free-shipping-bar__message">
+          🎉 You have got <strong class="{% if width_percentage >= 100 %} green {% endif %}">free shipping!</strong>
+        </p>
+      {% else %}
+        <p class="free-shipping-bar__message">
+          You are <strong>{{ remaining | money }}</strong> away from free shipping!
+        </p>
+      {% endif %}
+      <div class="free-shipping-bar__progress ">
+        <div
+          class="free-shipping-bar__progress-fill {% if width_percentage >= 100 %} green {% endif %}"
+          data-width="{% if width_percentage > 100 %}100{% else %}{{ width_percentage }}{% endif %}"
+        ></div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+<style>
+        .free-shipping-bar {
+          margin-bottom: 24px;
+          display: flex;
+          border: 1px dashed black;
+          padding: 12px 10px;
+
+        }
+
+        .free-shipping-bar__content {
+          width: 100%;
+        }
+        .free-shipping-bar__message {
+          margin: 0;
+          padding: 0;
+          text-align: center;
+          margin-bottom: 5px;
+        }
+        .free-shipping-bar__progress {
+          height: 5px;
+          width: 100%;
+          background-color: gainsboro;
+          position: relative;
+          overflow: hidden;
+        }
+        .free-shipping-bar__progress-fill {
+          display: block !important;
+          position: relative;
+          height: 5px;
+          width: 0%;
+          background: black;
+          transition: width 0.4s ease;
+        }
+
+
+  .free-shipping-bar__message .green {
+    /* color: #74DC2E; */
+    color: #328E6E;
+  }
+    .free-shipping-bar__progress-fill.active.green {
+      background-color: #328E6E;
+    }
+
+      .free-shipping-bar__progress-fill.active {
+              width: {{width_percentage}}%;
+          }
+</style>
+
+<script>
+  document.addEventListener('cart:updated', () => {
+    console.log('updated');
+    document.querySelector('.free-shipping-bar__progress-fill').classList.add('active');
+  });
+
+  document.addEventListener('cart:opened', () => {
+    console.log('opened');
+    document.querySelector('.free-shipping-bar__progress-fill').classList.add('active');
+  });
+  document.addEventListener('cart:closed', () => {
+    console.log('closed');
+    document.querySelector('.free-shipping-bar__progress-fill').classList.remove('active');
+  });
+</script>
