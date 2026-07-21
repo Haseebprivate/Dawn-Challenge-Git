@@ -47,6 +47,8 @@ if (!customElements.get('quick-add-modal')) {
             opener.removeAttribute('aria-disabled');
             opener.classList.remove('loading');
             opener.querySelector('.loading__spinner').classList.add('hidden');
+            // modal
+            initEstimatedDelivery();
           });
       }
 

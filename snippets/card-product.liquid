@@ -648,6 +648,34 @@
 {%- endif -%}
 
 <style>
-  .custom-badge {
+  quick-add-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999 !important;
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Move every quick-add modal to <body>
+    document.querySelectorAll('quick-add-modal').forEach((modal) => {
+      if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+      }
+    });
+
+    // Watch for product cards loaded dynamically
+    const observer = new MutationObserver(() => {
+      document.querySelectorAll('quick-add-modal').forEach((modal) => {
+        if (modal.parentElement !== document.body) {
+          document.body.appendChild(modal);
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  });
+</script>

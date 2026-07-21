@@ -493,6 +493,45 @@
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
       </cart-drawer-items>
+      {% comment %} Frequently Bought together {% endcomment %}
+
+      {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+
+      <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+      <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+
+      <style>
+        .cart_upsells .product-card-wrapper {
+          min-width: 285px;
+        }
+        .quick-add-modal[open][data-section='cart-drawer'] {
+          z-index: 1001;
+        }
+      </style>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; padding: 10px; background: #fdf9f9;">
+        <h4 style="margin: 0; font-weight: bold;">You may also like these:</h4>
+        <div class="cart_upsells" style="display: flex; gap: 20px; overflow: scroll;">
+          {% for item in cart.items %}
+            {% for upsell_product in item.product.metafields.custom.frequently_bought_together.value %}
+              {% assign upsell_already_in_cart = cart | line_items_for: upsell_product %}
+              {%- if upsell_already_in_cart == blank -%}
+                {% render 'card-product',
+                  card_product: upsell_product,
+                  show_vendor: false,
+                  show_rating: false,
+                  section_id: section.id,
+                  quick_add: 'standard',
+                  horizontal_class: true
+                %}
+              {%- endif -%}
+            {% endfor %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div></div>
+
       <div class="drawer__footer">
         {%- if settings.show_cart_note -%}
           <details id="Details-CartDrawer">

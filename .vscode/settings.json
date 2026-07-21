@@ -3,5 +3,7 @@
   "[liquid]": {
     "editor.defaultFormatter": "Shopify.theme-check-vscode"
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "editor.fontSize": 15,
+  "workbench.editor.enablePreview": false
 }

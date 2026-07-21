@@ -1688,3 +1688,30 @@ class CartPerformance {
 }
 
 // progress bar
+
+
+function initEstimatedDelivery(root = document) {
+  const deliveries = root.querySelectorAll(".estimated-delivery");
+
+  deliveries.forEach((delivery) => {
+    const minDays = Number(delivery.dataset.min);
+    const maxDays = Number(delivery.dataset.max);
+
+    function addDays(days) {
+      const date = new Date();
+      date.setDate(date.getDate() + days);
+
+      return date.toLocaleDateString(undefined, {
+        month: "long",
+        day: "numeric",
+      });
+    }
+
+    delivery.querySelector(".estimated-delivery__date").textContent =
+      `${addDays(minDays)} - ${addDays(maxDays)}`;
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initEstimatedDelivery();
+});
