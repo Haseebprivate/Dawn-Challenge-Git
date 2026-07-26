@@ -17,7 +17,7 @@ if (!customElements.get('product-form')) {
         this.hideErrors = this.dataset.hideErrors === 'true';
       }
 
-      onSubmitHandler(evt) {
+      async onSubmitHandler(evt) {
         evt.preventDefault();
         if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
@@ -41,6 +41,34 @@ if (!customElements.get('product-form')) {
           this.cart.setActiveElement(document.activeElement);
         }
         config.body = formData;
+
+        if (formData.get("gift_wrapping") == "on") {
+          formData.append("properties[Gift wrapping]", true);
+  
+          let giftWrappingFormData = {
+            'items': [{
+              'id': 48323566534809,
+              'quantity': formData.get("quantity"),
+              properties: {
+                'Gift wrapping for': formData.get("id")
+              }
+            }]
+          };
+
+          try {
+            const giftWrappingResponse = await fetch(window.Shopify.routes.root + 'cart/add.js', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(giftWrappingFormData)
+            })
+            const data = giftWrappingResponse.json();
+            console.log("added the gift wrapping", data)
+          } catch (error) {
+            console.log("gift wrapping error:", error)
+          }
+        }
 
         const variantId = formData.get('id');
         const quantity = parseInt(formData.get('quantity')) || 1;

@@ -60,6 +60,12 @@
           {%- render 'gift-card-recipient-form', product: product, form: form, section: section -%}
         {%- endif -%}
 
+        {% if product.metafields.custom.gift_wrapping %}
+          <label for="gift_wrapping" style="display: flex;margin: 10px 0;gap: 5px; cursor: pointer;">
+            <input type="checkbox" name="gift_wrapping" id="gift_wrapping">
+            Wrap this product in gift paper (+ $10)
+          </label>
+        {% endif %}
         <div class="product-form__buttons">
           {%- liquid
             assign check_against_inventory = true

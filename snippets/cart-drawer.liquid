@@ -124,6 +124,7 @@
                   <tbody role="rowgroup">
                     {%- for item in cart.items -%}
                       <tr
+                        data-variant-id="{{ item.variant_id }}"
                         id="CartDrawer-Item-{{ item.index | plus: 1 }}"
                         class="cart-item{% if item.parent_relationship.parent != null %} cart-item__nested-line{% endif %}"
                         role="row"
@@ -366,6 +367,7 @@
                               <cart-remove-button
                                 id="CartDrawer-Remove-{{ item.index | plus: 1 }}"
                                 data-index="{{ item.index | plus: 1 }}"
+                                data-gift-for-variant="{{ item.properties["Gift wrapping for"] }}"
                               >
                                 <button
                                   type="button"
