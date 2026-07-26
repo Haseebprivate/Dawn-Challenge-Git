@@ -408,5 +408,6 @@
     {% render 'back-to-top' %}
     {% render 'sticky-add-to-cart-v2' %}
     {{ 'wishlist.js' | asset_url | script_tag }}
+    <script src="{{ 'infinite-scroll.js' | asset_url }}" defer="defer"></script>
   </body>
 </html>
