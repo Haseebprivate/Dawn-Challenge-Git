@@ -47,15 +47,15 @@
           {% render 'custom-product-variant-picker', product: product, product_form_id: product_form_id %}
         </div> {% endcomment %}
 
-        <input
+        {% comment %} <input
           type="number"
           name="quantity"
           value="1"
           min="1"
           class="sticky-quantity"
-        >
+        > {% endcomment %}
 
-          <p>hi there </p>
+          {% comment %} <p>hi there </p> {% endcomment %}
 
         <button
           type="submit"
