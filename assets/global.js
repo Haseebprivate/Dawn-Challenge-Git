@@ -1715,3 +1715,52 @@ function initEstimatedDelivery(root = document) {
 document.addEventListener("DOMContentLoaded", () => {
   initEstimatedDelivery();
 });
+
+// cart drawer frequently products fix
+
+
+
+function frequentlyFixed() {
+  const modals = document.querySelectorAll("quick-add-modal");
+
+  console.log("Found modals:", modals.length);
+
+  modals.forEach((modal) => {
+    console.log("Moving", modal);
+
+    if (modal.parentNode !== document.body) {
+      document.body.appendChild(modal);
+    }
+  });
+  console.log("fixed ran")
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Move every quick-add modal to <body>
+    document.querySelectorAll('quick-add-modal').forEach((modal) => {
+      if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+      }
+    });
+
+    // Watch for product cards loaded dynamically
+    const observer = new MutationObserver(() => {
+      document.querySelectorAll('quick-add-modal').forEach((modal) => {
+        if (modal.parentElement !== document.body) {
+          document.body.appendChild(modal);
+        }
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  });
+}
+
+document.addEventListener("cart:opened", () => {
+  setTimeout(() => {
+    frequentlyFixed()
+  }, 1000); // 1 second delay
+})
+
