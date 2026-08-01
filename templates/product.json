@@ -118,11 +118,20 @@
         "padding_top": 36,
         "padding_bottom": 28
       }
+    },
+    "recently_viewed_products_UqNMBy": {
+      "type": "recently-viewed-products",
+      "name": "Recently Viewed",
+      "settings": {
+        "heading": "Recently Viewed",
+        "heading_size": "h1"
+      }
     }
   },
   "order": [
     "main",
     "disclosures",
-    "related-products"
+    "related-products",
+    "recently_viewed_products_UqNMBy"
   ]
 }
