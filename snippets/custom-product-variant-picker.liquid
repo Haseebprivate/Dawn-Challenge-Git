@@ -91,3 +91,30 @@
     </script>
   </variant-selects>
 {%- endunless -%}
+
+<script>
+  {% comment %} function updatePDPSwatches() {
+    document.querySelectorAll("input[type='radio']").forEach((input) => {
+      let imageUrl = input.dataset.variantImage;
+      let label = input.nextElementSibling;
+      let swatch = label?.querySelector('.swatch');
+      if (imageUrl && swatch && label) {
+        swatch.style.backgroundImage = `url('${imageUrl}')`;
+        swatch.style.backgroundSize = 'cover';
+        swatch.style.backgroundPosition = 'center';
+        swatch.style.width = '100px';
+        swatch.style.aspectRatio = '2';
+        swatch.style.setProperty('--swatch-input--border-radius', '0');
+        label.style.setProperty('--swatch-input--border-radius', '0');
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    updatePDPSwatches();
+    console.log('PDP Updated');
+  });
+  document.addEventListener('PDP:updated', () => {
+    updatePDPSwatches();
+    console.log('PDP Updated');
+  }); {% endcomment %}
+</script>

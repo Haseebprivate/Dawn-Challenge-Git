@@ -29,6 +29,7 @@
   type="{{ type | default: 'radio' }}"
   id="{{ id }}"
   name="{{ name }}"
+  data-variant-image="{{ value.variant.featured_image | image_url: width: 100 }}"
   value="{{ value }}"
   form="{{ product_form_id }}"
   class="swatch-input__input{% if visually_disabled %} visually-disabled{% endif %}"
@@ -42,6 +43,7 @@
     {{ additional_props }}
   {% endif %}
 >
+
 <label
   for="{{ id }}"
   title="{{ value }}"

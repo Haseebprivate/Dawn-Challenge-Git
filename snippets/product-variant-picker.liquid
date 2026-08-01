@@ -99,3 +99,90 @@
     </script>
   </variant-selects>
 {%- endunless -%}
+
+<script>
+  {% comment %} function updatePDPSwatches() {
+    document.querySelectorAll("input[type='radio']").forEach((input) => {
+      let imageUrl = input.dataset.variantImage;
+      let label = input.nextElementSibling;
+    
+      if (imageUrl.includes('error')) {
+      } else {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = '';
+        img.className = 'swatch'; // optional
+
+        label.appendChild(img);
+        label.style.borderRadius = 0;
+        {% comment %} img.style.objectFit = 'none' {% endcomment %}
+      }
+      let swatch = label?.querySelector('.swatch');
+      if (imageUrl && swatch && label) {
+        swatch.style.backgroundImage = `url('${imageUrl}')`;
+        swatch.style.backgroundSize = 'cover';
+        swatch.style.backgroundPosition = 'center';
+        swatch.style.width = '50px';
+
+        {% comment %} swatch.style.aspectRatio = '2'; {% endcomment %}
+        swatch.style.setProperty('--swatch-input--border-radius', '0');
+        label.style.setProperty('--swatch-input--border-radius', '0');
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    updatePDPSwatches();
+    console.log('PDP Updated');
+  });
+  document.addEventListener('PDP:updated', () => {
+    updatePDPSwatches();
+    console.log('PDP Updated');
+  }); {% endcomment %}
+
+
+  function updatePDPSwatches() {
+  document.querySelectorAll("input[type='radio']").forEach((input) => {
+    const imageUrl = input.dataset.variantImage;
+    const label = input.nextElementSibling;
+
+    if (!imageUrl || !label || imageUrl.includes('error')) return;
+
+    let swatch = label.querySelector('.swatch');
+
+    if (!swatch) {
+      swatch = document.createElement('img');
+      swatch.className = 'swatch';
+      swatch.alt = '';
+      label.appendChild(swatch);
+    }
+
+    swatch.src = imageUrl;
+    swatch.style.objectFit = 'cover';
+    swatch.style.backgroundSize = 'cover';
+    swatch.style.backgroundPosition = 'center';
+    swatch.style.width = '50px';
+    swatch.style.height = '50px';
+
+    label.style.setProperty('border-radius', '0');
+    swatch.style.setProperty('border-radius', '0');
+  });
+}
+
+function initPDPSwatches() {
+  updatePDPSwatches();
+
+  // Catch Shopify dynamic updates
+  const observer = new MutationObserver(() => {
+    updatePDPSwatches();
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initPDPSwatches);
+
+document.addEventListener('PDP:updated', updatePDPSwatches);
+</script>

@@ -155,7 +155,12 @@ if (!customElements.get("product-info")) {
             callback(html);
             // set focus to last clicked option value
             // document.querySelector(`#${targetId}`)?.focus();
-          })
+            // document.dispatchEvent(new CustomEvent("PDP:updated"))
+            
+
+          }).then(
+            document.dispatchEvent(new CustomEvent("PDP:updated"))
+          )
           .catch((error) => {
             if (error.name === "AbortError") {
               console.log("Fetch aborted by user");

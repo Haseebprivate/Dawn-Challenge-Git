@@ -67,8 +67,7 @@
       {{ label_unavailable }}
     {%- endcapture -%}
 
-    {%
-      render 'swatch-input',
+    {% render 'swatch-input',
       id: input_id,
       name: input_name,
       value: escaped_value,
@@ -84,6 +83,7 @@
     <input
       type="radio"
       id="{{ input_id }}"
+      data-variant-image="{{ value.variant.featured_image | image_url: width: 100 }}"
       name="{{ input_name | escape }}"
       value="{{ escaped_value }}"
       form="{{ product_form_id }}"
