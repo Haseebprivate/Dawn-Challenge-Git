@@ -23,6 +23,12 @@
           "type": "title",
           "settings": {}
         },
+        "add_to_wishlist_JB48Lj": {
+          "type": "add-to-wishlist",
+          "settings": {
+            "wishlist_text": "Add to Wishlist"
+          }
+        },
         "price": {
           "type": "price",
           "settings": {}
@@ -66,6 +72,7 @@
       "block_order": [
         "vendor",
         "title",
+        "add_to_wishlist_JB48Lj",
         "price",
         "variant_picker",
         "quantity_selector",
